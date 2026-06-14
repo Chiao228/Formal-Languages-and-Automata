@@ -1,0 +1,79 @@
+Chapter 9 TURING MACHINES
+
+--- Slide ---
+Learning Objectives At the conclusion of the chapter, the student will be able to: Describe the components of a standard Turing machine State whether an input string is accepted by a Turing machine Construct a Turing machine to accept a specific language Trace the operation of a Turing machine transducer given a sample input string Construct a Turing machine to compute a simple function  State Turing’s thesis and discuss the circumstantial evidence supporting it
+
+--- Slide ---
+Standard Turing Machine A standard Turing machine   ( 標準圖靈機 )  has  unlimited storage  in the form of a tape consisting of an infinite number of cells, with each cell storing one symbol The read-write head can travel in both directions, processing  one symbol per move A  deterministic control function  causes the machine to change states and possibly overwrite the tape contents Input string is surrounded by blanks, so the input alphabet is considered a proper subset of the tape alphabet
+
+--- Slide ---
+Diagram of a Standard Turing Machine In a standard Turing machine, the tape acts as the input, output, and storage medium.
+
+--- Slide ---
+Definition of a Turing Machine A  Turing Machine  is defined by: A  finite set of internal states  Q An input alphabet  Σ    ( Σ     Γ   – {  } ) A tape alphabet  Γ A transition function  δ    (Q      Γ     Q      Γ      {L, R} ) A special symbol    from  Γ  called the blank An initial state q 0 A set of final states F Input to the transition function  δ  consists of the  current state  of the control unit and the  current tape symbol Output of  δ  consists of a new state,  new tape symbol , and location of the next symbol to be read ( move direction : L or R) δ  is a  partial function , so that some (state, symbol) input combinations may be undefined
+
+--- Slide ---
+Think About The standard turning machine uses a finite number of states but use infinite storage A finite-state controller   a fixed-size program or algorithm Infinite storage  hardware resources are not the concern This theoretical machine is designed to prove the  computational power  of algorithms, independent of resource limitations.
+
+--- Slide ---
+Sample Turing Machine Transition One sample transition rule: 	 δ (q 0 , a) = (q 1 , d, R) When the control unit is in state q 0  and the tape symbol is a, the new state is q 1 , the symbol d replaces a on the tape, and the read-write head moves one cell to the right
+
+--- Slide ---
+A Sample Turing Machine Consider a Turing machine      Q = {  q 0 ,   q 1  },  Σ  = { a, b },   = { a, b,    }, F = {  q 1  }     with transition rules represented by a transition graph The sample operation 
+
+--- Slide ---
+The final states in a Turing Machine  A final state means: The computation is finished; the machine must halt immediately. Once a final state is reached: There are no more transitions defined from the final state. The machine stops reading, moving, or writing. The output (usually left on the tape) is considered the computed result.
+
+--- Slide ---
+A Turing Machine that Never Halts The Turing machine only halts  whenever it reaches a configuration for which  δ  is not defined Enter a state node without any outgoing edges This always happens when entering a final state It is possible for a Turing machine to  never halt  on certain inputs, as is the case example below and input string ab
+
+--- Slide ---
+The Halting Problem How about  nfa  and  npda ? Some computation path/branch may run forever However, the input is finite, and the machine should read the entire input if accepting
+
+--- Slide ---
+About the Final States A single final state is usually enough How to accept the empty string? The input tape includes all blanks It is uncommon to make the initial state also be a final state.
+
+--- Slide ---
+Instantaneous Description The instantaneous description of a machine in state q with the tap content as follows: Denoted as x 1 qx 2 If the initial state is q 0  and the input string is w,  then the machine starts with the instantaneous description  q 0 w
+
+--- Slide ---
+The Language Accepted by a Turing Machine The language accepted by a Turing machine is the set of all strings which cause the machine to  halt in a final state , when started in its standard initial configuration (q 0 , leftmost input symbol) A  string is rejected  if The machine  halts in a nonfinal state , or The machine  never halts  (can not be observed) Turing-recognizable
+
+--- Slide ---
+Example: Accept  a n b n Step 1.1: Start from the leftmost ‘a’ Replace ‘a’ by ‘X‘ Step 2: Move right to find the first ‘b’ Pass over ‘a’ and ‘Y’ Replace ‘b’ by Y Step 3: Move left to find the leftmost ‘a‘ Pass over ‘Y’ and ‘a’ Encounter ‘X‘ then move right, go to Step 1 Step 1.2: Start from the leftmost ‘Y’ (no more ‘a’) Pass over ‘Y’ until we reach the blank symbol (no more ‘b’), then accept the input string
+
+--- Slide ---
+Example: Accept  a n b n https://youtu.be/4jZvu_n96UQ
+
+--- Slide ---
+Turing Machines as Transducers Turing machines provide an abstract model for digital computers, acting as a transducer that transforms input into output A  Turing machine transducer  implements a function that treats the original contents of the tape as its input and the final contents of the tape as its output A function is  Turing-computable  if it can be carried out by a Turing machine capable of processing all values in the function domain
+
+--- Slide ---
+A Sample Turing Machine Transducer Given two positive integers x and y in  unary notation , separated by a single zero, the Turing machine below computes the function x + y Represent integer x by x consecutive 1’s Design logic Move past all 1’s until reaching 0 Replace 0 by 1 Move past all 1’s until reaching the blank Move left to locate the first 1 Replace 1 by 0 Move past all 1’s  until reaching the blank Move right to the leftmost 1
+
+--- Slide ---
+A Sample Turing Machine Transducer The transducer has  Q = {  q 0 ,   q 1 ,   q 2,  q 3 ,   q 4  }   with initial state q 0  and final state q 4 The defined values of the transition function are      δ (q 0 ,  1 ) =  (q 0 ,  1, R ) 		 δ (q 0 , 0) =  (q 1 ,  1, R ) 	  δ (q 1 ,  1 ) =  (q 1 ,  1, R ) 		 δ (q 1 ,   ) =  (q 2 ,  , L ) 	  δ (q 2 ,  1 ) =  (q 3 ,  0, L )		 δ (q 3 ,  1 ) =  (q 3 ,  1, L ) 	  δ (q 3 ,   ) =  (q 4 ,  , R ) 	 When the machine halts, the read-write head is positioned on the leftmost symbol of the unary representation of x + y
+
+--- Slide ---
+Combining Turing Machines By combining Turing Machines that perform simple tasks, complex algorithms can be implemented For example, assume the existence of a machine to compare two numbers (comparer), one to add two numbers (adder), and one to erase the input (eraser) Figure 9.8 shows the diagram of a Turing Machine that computes the function  f(x, y) = x + y (if x ≥ y), 0 (if x < y)
+
+--- Slide ---
+Turing’s Thesis How powerful are Turing machines? Turing’s Thesis   ( 論點 / 猜想 )   contends that any computation carried out by mechanical means can be performed by some Turing machine An acceptance of Turing’s Thesis leads to a definition of an algorithm: An  algorithm  ( 演算法 ) for a function f : D   R is a Turing machine M, which given any d  D on its tape,  eventually halts with the correct answer  f(d)  R on its tape
+
+--- Slide ---
+Evidence Supporting Turing’s Thesis Anything that can be done on any existing digital computer can also be done by a Turing machine No one has yet been able to suggest a problem, solvable by what we intuitively consider an algorithm, for which a Turing machine program cannot be written Alternative models have been proposed for mechanical computation, but none of them is more powerful than the Turing machine model Even for quantum computers  
+
+--- Slide ---
+Other variants of the Turing machine Moves with the stay-option Multiple read/write-heads Multiple or Multidimensional tapes Nondeterministic TM … All of them have the same computational power as the standard TM, but differ in efficiency
+
+--- Slide ---
+Exercises 1.   Design Turing machines that accept the following languages       (a) L = { w   {a, b} + :  |w| is odd }       (b) L = { w   {a, b} +  : w is in L(aa*b*)}      (c) L = { ww: w   {a, b} +  }
+
+--- Slide ---
+(a) L = { w   {a, b} + :  |w| is odd }  Start from the  dfa :
+
+--- Slide ---
+(b) L = { w   {a, b} +  : w is in L(aa*b*)} Start from the  dfa :
+
+--- Slide ---
+Exercises Hint to (c):  Find the middle position of the input Find the leftmost symbol of the input which is neither A nor B. Mark the symbol by A if it is an a and replace it by B if it is b. Move the read-write head to right find the rightmost symbol which is neither A nor B, and mark it with A or B accordingly (2) Convert all A’s and B’s on the left half into a’s and b’s  (3) Compare the two halves for the input  Match a (changed as A) with one A (changed as X) on the right half. Match b (changed as B) with one B (changed as X) on the right half.
