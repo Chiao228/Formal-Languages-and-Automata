@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>正規語言 CH5-CH9 每張投影片詳細解析</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true, theme: 'default' });</script>
     <style>
         :root {
             /* 主題色 (明亮主題) */
@@ -382,6 +384,10 @@
                     <li><a href="#ch9-thesis" class="toc-sublink">Turing 的猜想與變體</a></li>
                 </ul>
             </li>
+            
+            <li class="toc-item expanded" style="margin-top: 1rem; border-top: 1px solid var(--sidebar-border); padding-top: 1rem;">
+                <a href="#appendix-theorems" class="toc-link">附錄：CH5-CH7 定理與公式總表</a>
+            </li>
         </ul>
     </div>
 </div>
@@ -439,6 +445,49 @@ S &rarr; aSb | bSa | SS | &lambda;
             <div class="highlight-box">
                 <div class="theorem-title">Theorem 5.1</div>
                 <p>給定一個 CFG G，對於 L(G) 中的每一個字串 w，必定存在一棵推導樹，其產出為 w；反之，任何一棵以 G 的規則生成的推導樹，其產出必屬於 L(G)。這證明了文法的語法結構與樹狀結構是一一對應的。</p>
+            </div>
+
+            <div class="highlight-box">
+                <div class="theorem-title">🌳 推導樹範例：解析字串 "a + b * c"</div>
+                <p>我們使用嚴謹的運算式文法來解析 <code>a + b * c</code>：</p>
+                <div class="code-block">
+E &rarr; E + T | T
+T &rarr; T * F | F
+F &rarr; (E) | I
+I &rarr; a | b | c
+                </div>
+                <p><strong>最左推導過程 (Leftmost Derivation)：</strong><br>
+                <code>E &rArr; E + T &rArr; T + T &rArr; F + T &rArr; I + T &rArr; a + T &rArr; a + T * F &rArr; a + F * F &rArr; a + I * F &rArr; a + b * F &rArr; a + b * I &rArr; a + b * c</code></p>
+                <p><strong>對應的推導樹 (Parse Tree)：</strong></p>
+                <div class="mermaid" style="text-align: center; margin-top: 1rem;">
+graph TD
+    E_root["E"] --> E_left["E"]
+    E_root --> plus["+"]
+    E_root --> T_right["T"]
+    
+    E_left --> T1["T"]
+    T1 --> F1["F"]
+    F1 --> I1["I"]
+    I1 --> a_node["a"]
+    
+    T_right --> T2["T"]
+    T_right --> star["*"]
+    T_right --> F2["F"]
+    
+    T2 --> F3["F"]
+    F3 --> I2["I"]
+    I2 --> b_node["b"]
+    
+    F2 --> I3["I"]
+    I3 --> c_node["c"]
+
+    style a_node fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0284c7,font-weight:bold
+    style b_node fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0284c7,font-weight:bold
+    style c_node fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0284c7,font-weight:bold
+    style plus fill:#f1f5f9,stroke:#64748b,stroke-width:2px,font-weight:bold
+    style star fill:#f1f5f9,stroke:#64748b,stroke-width:2px,font-weight:bold
+                </div>
+                <p style="text-align: center; font-size: 0.95rem; color: #64748b; margin-top: 1rem; font-weight: 600;">從樹的底部葉節點由左至右讀取，即可得到產出字串 "a + b * c"。</p>
             </div>
         </div>
     </div>
@@ -836,6 +885,74 @@ B &rarr; b
             「任何可以透過機械步驟 (機械運算) 完成的計算，都可以被圖靈機完成。」</p>
             <p>這個猜想得到了廣泛支持，因為至今沒有人能找出任何一個直覺上「能被電腦算出」的問題，卻無法寫成圖靈機程式。現代電腦能做的事，圖靈機都能做。</p>
             <p><strong>TM 的變體：</strong>即便我們為圖靈機增加了「多紙帶 (Multiple tapes)」、「多讀寫頭 (Multiple heads)」、「二維紙帶」或「非決定性 (Nondeterministic)」的能力，它們的<strong>計算能力 (Computational Power) 與標準 TM 完全相同</strong>，差別僅在於執行的效率。</p>
+        </div>
+    </div>
+
+    <!-- ================= APPENDIX ================= -->
+    <h2 id="appendix-theorems" class="chapter-heading">附錄：CH5-CH7 核心定理與公式總整理</h2>
+
+    <div class="slide-card section-target">
+        <h3>CH5: 語法推導與剖析定理</h3>
+        <div class="explanation">
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 5.1 (推導樹與文法等價性)</div>
+                <p><strong>內容：</strong> 給定 CFG G，字串 w 屬於 L(G) 若且唯若存在一棵以 S 為根節點、產出為 w 的推導樹。</p>
+                <p><strong>解釋：</strong> 這個定理保證了字串的線性生成過程（最左或最右推導）與二維的推導樹結構是完全等價的，是後續所有編譯器語法樹 (Syntax Tree) 建立的基礎。</p>
+            </div>
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 5.2 (窮舉剖析法)</div>
+                <p><strong>內容：</strong> 若文法不含 <code>&lambda;-生成</code> 與 <code>單一生成</code>，則可用窮舉法判定字串 w 是否屬於 L(G)。</p>
+                <p><strong>解釋：</strong> 因為沒有 &lambda; 或單一生成，推導過程中產生的字串長度必定會嚴格遞增。因此最多推導 <code>2|w|-1</code> 步，字串長度必定會超過 |w|，保證演算法會在有限步數內停止 (Halt)，絕不會陷入無窮迴圈。</p>
+            </div>
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 5.3 (線性時間剖析)</div>
+                <p><strong>內容：</strong> 對於簡單文法 (s-grammar)，字串剖析的時間複雜度為 <strong><code>O(|w|)</code></strong>。</p>
+                <p><strong>解釋：</strong> s-grammar 的規則都是 <code>A &rarr; ax</code> 的形式。因為每次讀入一個終止符號 <code>a</code> 就能唯一確定一條對應的規則，無需回溯，因此效率極高，執行時間與字串長度呈線性正比。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-card section-target">
+        <h3>CH6: 文法簡化與正規形式公式</h3>
+        <div class="explanation">
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 6.1 (替換法則 Substitution Rule)</div>
+                <p><strong>公式：</strong> 若 <code>A &rarr; uBv</code>，且 <code>B &rarr; y<sub>1</sub> | y<sub>2</sub></code>，則可替換為 <code>A &rarr; uy<sub>1</sub>v | uy<sub>2</sub>v</code>。</p>
+                <p><strong>解釋：</strong> 這是消除無用生成和轉化為正規形式的核心工具。將變數直接展開並不會改變原本能產生的語言，但能讓文法結構達到我們想要的簡化格式。</p>
+            </div>
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 6.5 (簡化文法標準順序)</div>
+                <p><strong>公式：</strong> <code>消除 &lambda;-生成</code> &rarr; <code>消除單一生成</code> &rarr; <code>消除無用生成</code></p>
+                <p><strong>解釋：</strong> 順序絕對不可調換。因為消除 &lambda;-生成可能會製造出新的單一生成；消除單一生成可能會製造出無用變數。依照此順序才能保證最終文法徹底乾淨。</p>
+            </div>
+            <div class="highlight-box">
+                <div class="theorem-title">CNF 與 GNF (Chomsky & Greibach 正規形式)</div>
+                <p><strong>公式：</strong><br>
+                CNF 規定：<code>A &rarr; BC</code> 或 <code>A &rarr; a</code><br>
+                GNF 規定：<code>A &rarr; aV*</code> (一個終止符配任意數量變數)</p>
+                <p><strong>解釋：</strong> CNF 保證了任何長度為 n 的字串，剛好需要 <code>2n-1</code> 步推導，形成完美的二元樹。GNF 保證每次推導剛好消耗一個輸入字元，完美對應下推自動機 (NPDA) 的每一步讀取操作。</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-card section-target">
+        <h3>CH7: 下推自動機 (PDA) 定理與公式</h3>
+        <div class="explanation">
+            <div class="highlight-box">
+                <div class="theorem-title">自動機轉換函數 &delta; (Transition Function)</div>
+                <p><strong>公式：</strong> <code>&delta;(q, a, X) = {(q', Y)}</code></p>
+                <p><strong>解釋：</strong> 這是 PDA 的大腦。代表在狀態 <code>q</code>，讀到輸入字元 <code>a</code>，且堆疊最上方是 <code>X</code> 時：會轉移到新狀態 <code>q'</code>，並把堆疊頂端的 <code>X</code> 拿掉，改放上 <code>Y</code>。</p>
+            </div>
+            <div class="highlight-box">
+                <div class="theorem-title">瞬時描述 ID (Instantaneous Description)</div>
+                <p><strong>公式：</strong> <code>(q, w, u) &vdash; (q', w', u')</code></p>
+                <p><strong>解釋：</strong> 系統追蹤 PDA 計算過程的快照。<code>q</code> 為當下狀態，<code>w</code> 為還沒讀完的輸入字串，<code>u</code> 為目前的堆疊內容。符號 <code>&vdash;</code> 表示一步的狀態轉移。</p>
+            </div>
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 7.1 (CFG 與 NPDA 等價性)</div>
+                <p><strong>內容：</strong> 一個語言 L 是上下文無關語言 (CFL)，若且唯若存在一個 NPDA 可以接受 L。</p>
+                <p><strong>解釋：</strong> 理論電腦科學的重要里程碑。這證明了「加上堆疊記憶體」的有限狀態機，其計算能力剛好等同於「上下文無關文法」。兩者完全對等，可以互相轉換。</p>
+            </div>
         </div>
     </div>
 
