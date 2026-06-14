@@ -1,0 +1,142 @@
+Chapter 7 PUSHDOWN AUTOMATA
+
+--- Slide ---
+Learning Objectives At the conclusion of the chapter, the student will be able to: Describe the components of a nondeterministic pushdown automaton State whether an input string is accepted by a nondeterministic pushdown automaton Construct a pushdown automaton to accept a specific language Given a context-free grammar in  Greibach  normal form, construct the corresponding pushdown automaton Describe the differences between deterministic and nondeterministic pushdown automata Describe the differences between deterministic and general context-free languages
+
+--- Slide ---
+Nondeterministic Pushdown Automata A pushdown automaton ( 下推自動機 ) is a model of computation designed to process context-free languages Pushdown automata  use a stack as storage mechanism
+
+--- Slide ---
+Nondeterministic Pushdown Automata A  nondeterministic pushdown accepter  (npda) is defined by: A finite set of states Q An input alphabet  Σ A stack alphabet  Γ A transition function  δ An initial state q 0 A stack start symbol z A set of final states F Input to the transition function  δ  consists of a triple consisting of a state, input symbol (or  ) , and the top symbol of the stack Output of  δ  consists of a new state and an output that is pushed onto the stack Transitions can be used to model common stack operations
+
+--- Slide ---
+Nondeterministic Pushdown Automata Having the following kinds of moves Multiple-move - move No-move (undefined moves) The symbol z is used to indicate the bottom of the stack If the stack contains only 'z', it means the stack is empty
+
+--- Slide ---
+Sample npda Transitions Example 7.1 presents the sample transition rule: 	 δ (q 1 , a, b) = {(q 2 , cd), (q 3 ,   )} According to this rule, when the control unit is in state q 1 , the input symbol is a, and the top of the stack is b, two moves are possible: New state is q 2  and the symbols cd replace b on the stack New state is q 3  and b is simply removed from the stack
+
+--- Slide ---
+Sample npda Transitions If a particular transition is not defined, the corresponding (state, symbol, stack top) configuration represents a  dead  state
+
+--- Slide ---
+A Sample Nondeterministic Pushdown Accepter Example 7.2: Consider the   language    L = {a n b n :n 0}  {a}
+
+--- Slide ---
+Transition Graphs In the   transition graph for a npda, each edge is labeled with the input symbol, the stack top, and the string that replaces the top of the stack  The graph below represents the npda in Example 7.2: ** In JFLAP, use Z to represent the symbol z
+
+--- Slide ---
+A Sample Nondeterministic Pushdown Accepter Construct the  npda       Q = {  q 0 ,   q 1 ,   q 2,  q 3  },  Σ  = { a, b },   = { 0, 1 }, z = 0, F = { q 3 }     with initial state q 0  and transition function given by:     δ (q 0 , a, 0) = { (q 1,  10), (q 3 ,   ) }    	 δ (q 0 ,  , 0 ) = { (q 3 ,   ) } 	 δ (q 1 , a, 1) = { (q 1,  11) } 	 δ (q 1 , b, 1) = { (q 2,    ) } 	 δ (q 2 , b, 1) = { (q 2,    ) } 	 δ (q 2 ,  , 0 ) = { (q 3 ,   ) } As long as the control unit is in q 1 , a 1 is pushed onto the stack when an a is read The first b causes control to shift to q 2 , which removes a symbol from the stack whenever a b is read 
+
+--- Slide ---
+A Sample Nondeterministic Pushdown Accepter In the previous example,  u pon accepting the input, the  npda  may conclude with one of the following two actions : Clear all from the stack (clear-to-empty) Leave only z in the stack (clear-to-initial) Take care the restarting problem when using the clear-to-initial way    
+
+--- Slide ---
+Instantaneous Descriptions To trace the operation of a npda, we must keep track of the current state of the control unit, the stack contents, and the unread part of the input string An  instantaneous description  is a triplet (q, w, u) that describes state, unread input symbols, and stack contents (with the top as the leftmost symbol) A move is denoted by the symbol  ˫ A partial trace of the npda in Example 7.2 with input string ab is   	 (q 0 , ab, 0)  ˫   (q 1 , b, 10)  ˫   (q 2 ,  , 0 )  ˫   (q 3 ,   ,   ) 
+
+--- Slide ---
+The Language Accepted by a Pushdown Automaton The language accepted by a npda is the set of all strings that cause the npda to halt in a final state, after examining all input symbols The final contents of the stack are irrelevant As was the case with nondeterministic automata, the string is accepted if any of the computations cause the npda to halt in a final state
+
+--- Slide ---
+Modes of Acceptance The following three modes are equivalent Accepted on final state ( we use this one )        ( q 0 ,  w , z) ⊢ ∗  ( q f ,  λ ,   α )     and  q f   ∈  F (2) A ccepted on empty stack        ( q 0 ,  w , z) ⊢ ∗  ( q ,  λ ,   λ )  (no need to label final states) (3) A ccepted on final state and empty stack        ( q 0 ,  w , z) ⊢ ∗  ( q f ,  λ ,   λ )  and  q f   ∈  F
+
+--- Slide ---
+Example:  npda  construction L = {w { a,b } * ,  n a (w)= n b (w)}
+
+--- Slide ---
+Example:  npda  construction L = { ww R : w { a,b } + }
+
+--- Slide ---
+Pushdown Automata and Context-Free  Languages Theorem 7.1 states that, for any context-free language L, there is a npda to recognize L Assuming that the language is generated by a context-free grammar in  Greibach normal form , the constructive proof provides an algorithm that can be used to build the corresponding npda The resulting npda simulates grammar derivations by keeping variables on the stack while making sure that the input symbol matches the terminal on the right side of the production
+
+--- Slide ---
+Sample Construction of a NPDA from a Grammar Consider the following grammar in Greibach normal form    S   aSA | a    A   bB    B  b
+
+--- Slide ---
+Sample Construction of a NPDA from a Grammar The state diagram of the constructed  npda
+
+--- Slide ---
+Sample Construction of a NPDA from a Grammar The corresponding npda has  Q = {  q 0 ,   q 1 ,   q f   }   with initial state q 0  and final state  q f The start symbol S is placed on the stack with the transition      δ (q 0 ,  , z ) = { (q 1 ,  Sz ) } A final transition places the control unit in its final state when the stack is empty 	 δ (q 1 ,  , z ) = { ( q f ,   ) }   // or { ( q f ,  z )  }
+
+--- Slide ---
+Sample Construction of a NPDA from a Grammar The grammar productions are simulated with the transitions 	 δ (q 1 , a, S)  = { (q 1,  SA), (q 1,    ) } 	 δ (q 1 , b, A) = { (q 1,   B ) } 	 δ (q 1 , b, B) = { (q 1,    ) }
+
+--- Slide ---
+Construction of a Npda from a Grammar in Greibach Normal Form The npda has Q = { q 0 , q 1 ,  q f   }, input alphabet equal to the grammar terminal symbols, and stack alphabet equal to the grammar variables The transition function contains the following: A rule that pushes S on the stack and switches control to q 1  without consuming input For every production of the form A    aX, a rule 	 (q 1 , X)    δ  (q 1 , a, A) A rule that switches the control unit to the final state when there is no more input and the stack becomes initial
+
+--- Slide ---
+Construction of a Npda from an Arbitrary CFG How about the CFG is not in  Greibach  normal form?    S    aABB  |  aAA    A   aBB  | b    B   bBB  |  A  |  abBa V   x,    x is any sentential form,  add   (q 1 ,  x ) to   δ (q 1 ,   ,  V ) For each terminal a in x,   add  (q 1 ,   )  to  δ (q 1 , a, a)
+
+--- Slide ---
+Why popping the terminals ? Consider the following grammar:        
+
+--- Slide ---
+NPDA to Context-free Grammar The requirements of the  npda  = (Q, ,,,q 0 ,z,F) A single final state that is entered if and only if the stack is empty All transitions must have the form  δ (q i ,  a , A ) = { c 1 , c 2  , …  c n  }  where  c i  = ( q j ,   ) or c i  = ( q j , BC)     a {},  A, B and C Each move either increases or decreases that stack content by a single symbol
+
+--- Slide ---
+NPDA to Context-free Grammar Problems on the direct translation of each edge transition to the grammar rule
+
+--- Slide ---
+NPDA to Context-free Grammar
+
+--- Slide ---
+NPDA to Context-free Grammar Each constructed variable is in the form of  ( q i A q j )  Translate the transition  δ (q i ,  a, A )  =   ( q j ,   )  in the production:      ( q i A q j )   a Translate the transition  δ (q i ,  a, A )  =   ( q j ,  BC )  in the productions:       ( q i A q k )   a( q j B q l )( q l C q k ),        q l  and  q k  are all possible states in Q (q 0 zq f )  is the start symbol,  q f   = F (for short) q i A q j      A ij
+
+--- Slide ---
+Explanation
+
+--- Slide ---
+Example Consider the  npda  with transitions
+
+--- Slide ---
+Example Re-construct the transitions by updating the  above second transition
+
+--- Slide ---
+Example The last three transitions yield the productions:  The first transition yields the productions:
+
+--- Slide ---
+Example The second transition yields the productions: Remove all useless variables  ( q i A q j )  that are either not on the left-hand sides of any productions or with no path from qi to  qj  in the  npda (q 0 A q 0 ), (q 0 A q 2 ) No path: q1 to q0, q1 to q1, q1 to q3, and q2 to q2 
+
+--- Slide ---
+Example The final effective production rules are
+
+--- Slide ---
+NPDA to Context-free Grammar How to meet the requirement of property 1 Force to use the clear-to-empty approach when accepted Force to have one single final state How to meet the requirement of property 2 δ ( q i , a, B) = {( q j , CDE)} is replaced by     δ ( q i , a, B) = {( q new , DE)},  δ ( q new ,  λ,  D) = {( q j , CD)}. δ ( q i , a, B) = {( q j , C)} is replaced by     δ ( q i , a, B) = {( q new ,  λ )},  δ ( q new ,  λ,  X) = {( q j , CX)}    (where X is the symbol underlying B in the stack)
+
+--- Slide ---
+Explanation
+
+--- Slide ---
+Deterministic Pushdown Automata A  deterministic pushdown accepter  (dpda) never has a choice in its move Restrictions on dpda transitions: Any  δ (q,  a , b )  transition contains at most one element ( may be empty )  (( a,b ) determines a unique move) If the dpda defines a transition for a particular configuration (state,  λ , stack top) , such as     δ (q,  λ , b )     then   δ (q,  c , b )  =   for every  c   ( base on b there is a  λ -move, any input c combined with b can not determine any transitions) dpda  can contain  λ -moves and no-moves
+
+--- Slide ---
+Explanation
+
+--- Slide ---
+Example of a Deterministic Pushdown Automaton Example 7.10 presents a dpda to accept the language    L = { a n b n : n ≥ 0 }  The  dpda  has Q = {  q 0 ,   q 1 ,   q 2  }, input alphabet { a, b }, stack alphabet { 0, 1 }, z = 0, and  q 0   as its initial and final state 
+
+--- Slide ---
+Example of a Deterministic Pushdown Automaton The transition rules are      δ (q 0 ,  a , 0 )  = { (q 1 ,  10 ) } 	  δ (q 1 , a, 1)  = { (q 1,  11) } 	  δ (q 1 , b, 1)  = { (q 2,    ) }      δ (q 2 , b, 1)  = { (q 2,    ) } 	  δ (q 2 ,   , 0)  = { (q 0,    ) }
+
+--- Slide ---
+Deterministic Context-Free Languages A context-free language L is  deterministic  if there is a dpda to accept L Sample deterministic context-free languages: 	 { a n b n : n ≥ 0 } 	{ wxw R : w    {a, b}*} Deterministic and nondeterministic pushdown automata are not equivalent:  there are some context-free languages for which no dpda can be built
+
+--- Slide ---
+Explanation
+
+--- Slide ---
+Deterministic Context-Free Languages If we can construct a  dpda  for a CFL, then this language is deterministic Most of the time, there is no straightforward technique to prove that a given CFL is not deterministic E.g.,  {  ww R : w    {a, b}*}
+
+--- Slide ---
+Grammars for Deterministic Context-Free Languages Deterministic context-free languages can be parsed efficiently (linear time) What kinds of grammars are suitable? Observation:  from the inputs, uniquely determine the next production s-grammar is ok but too restricted LL(k) grammar: examine the currently scanned symbol and a look-ahead of the next k – 1 symbols LL   grammars (top-down parser) have some limitations (i.e., no left recursions), LR grammars (bottom-up parser) are alternative
+
+--- Slide ---
+Grammars for Deterministic Context-Free Languages Example: S    aSb  | ab Example: S   SS   |   aSb  | ab
+
+--- Slide ---
+Exercises 1. Construct an  npda  that accepts the  cfg  language L = {a n b 2n : n  0} L = { a n b m : n 0,  nm } L =  {a 2n b n : n  0} 2. How can we convert an  nfa  to an  npda ?
+
+--- Slide ---
+Exercises 3. Construct an  npda  that accepts the grammar   S    aA  A   aABC  |  bB  | a  B  b  C  c
+
+--- Slide ---
+Exercises 4. Is the language given in Example 7.2 is  deterministic? L = {a n b n :n 0}  {a}

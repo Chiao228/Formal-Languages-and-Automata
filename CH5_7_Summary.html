@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>正規語言 CH5-CH7 每張投影片詳細解析</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --bg-color: #0f172a;
+            --sidebar-bg: #1e293b;
+            --surface: rgba(30, 41, 59, 0.8);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 側邊欄設計 */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-list > li {
+            margin-bottom: 1.5rem;
+        }
+
+        .toc-chapter {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .toc-sublist {
+            list-style: none;
+            padding-left: 1rem;
+            border-left: 2px solid var(--border);
+        }
+
+        .toc-sublist li {
+            margin-bottom: 0.5rem;
+        }
+
+        .toc-sublist a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: block;
+            padding: 0.3rem 0.5rem;
+            border-radius: 0.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .toc-sublist a:hover {
+            background: rgba(139, 92, 246, 0.2);
+            color: white;
+        }
+
+        /* 主內容區設計 */
+        .main-content {
+            margin-left: 320px;
+            padding: 3rem 4rem;
+            flex: 1;
+            background: linear-gradient(135deg, var(--bg-color) 0%, #020617 100%);
+        }
+
+        header {
+            margin-bottom: 4rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: -webkit-linear-gradient(45deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 卡片與內容區 */
+        .slide-card {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .slide-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        .slide-card h3 {
+            font-size: 1.6rem;
+            color: var(--accent);
+            margin-top: 0;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .explanation {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #e2e8f0;
+        }
+
+        .highlight-box {
+            background: rgba(56, 189, 248, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .code-block {
+            background: #0f172a;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            color: #a5b4fc;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            margin: 1.5rem 0;
+        }
+
+        strong {
+            color: #f8fafc;
+        }
+
+        .theorem-title {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 左側目錄 (Table of Contents) -->
+<div class="sidebar">
+    <h2>目錄導覽</h2>
+    <ul class="toc-list">
+        <!-- CH5 -->
+        <li>
+            <span class="toc-chapter">CH 5: 上下文無關語言</span>
+            <ul class="toc-sublist">
+                <li><a href="#ch5-intro">上下文無關文法 (CFG) 介紹</a></li>
+                <li><a href="#ch5-examples">CFG 經典例題解析</a></li>
+                <li><a href="#ch5-derivations">最左與最右推導 / 推導樹</a></li>
+                <li><a href="#ch5-parsing">剖析與成員問題 (Theorem 5.2, 5.3)</a></li>
+                <li><a href="#ch5-ambiguity">文法的模擬兩可性與消除</a></li>
+            </ul>
+        </li>
+        <!-- CH6 -->
+        <li>
+            <span class="toc-chapter">CH 6: 簡化與正規形式</span>
+            <ul class="toc-sublist">
+                <li><a href="#ch6-subst">文法轉換與替換法則 (Theorem 6.1)</a></li>
+                <li><a href="#ch6-useless">消除無用生成</a></li>
+                <li><a href="#ch6-lambda">消除 &lambda;-生成</a></li>
+                <li><a href="#ch6-unit">消除單一生成與簡化順序</a></li>
+                <li><a href="#ch6-cnf">Chomsky 正規形式 (CNF)</a></li>
+                <li><a href="#ch6-gnf">Greibach 正規形式 (GNF)</a></li>
+            </ul>
+        </li>
+        <!-- CH7 -->
+        <li>
+            <span class="toc-chapter">CH 7: 下推自動機 (PDA)</span>
+            <ul class="toc-sublist">
+                <li><a href="#ch7-npda">非決定性下推自動機 (NPDA)</a></li>
+                <li><a href="#ch7-moves">NPDA 的轉換、圖形與接受模式</a></li>
+                <li><a href="#ch7-equiv">CFG 與 NPDA 的等價性 (Theorem 7.1)</a></li>
+                <li><a href="#ch7-gnf2npda">從 GNF 構造 NPDA</a></li>
+                <li><a href="#ch7-npda2cfg">將 NPDA 轉換為 CFG</a></li>
+                <li><a href="#ch7-dpda">決定性下推自動機 (DPDA)</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<!-- 右側主內容區 -->
+<div class="main-content">
+    <header>
+        <h1>正規語言詳細解析：CH5 - CH7</h1>
+        <p class="explanation">本文件針對講義每張投影片的觀念進行深入展開解釋，並附上定理證明邏輯與詳細的例題解題過程。</p>
+    </header>
+
+    <!-- ================= CHAPTER 5 ================= -->
+    <h2 style="color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-top: 0;">Chapter 5: Context-Free Languages</h2>
+
+    <div id="ch5-intro" class="slide-card">
+        <h3>上下文無關文法 (Context-Free Grammars) 介紹</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>許多實用的語言（如大部分的程式語言）都不是正規語言 (Regular Languages)，我們需要表達能力更強的模型，也就是「上下文無關文法 (CFG)」。</p>
+            <p>CFG 的核心特徵是：<strong>生成規則的左側必須是單一變數 (Single Variable)，而右側沒有任何限制</strong>（可以是變數與終止符號的任意組合）。若一個語言能由 CFG 產生，我們便稱之為上下文無關語言 (CFL)。因為正規文法是 CFG 的一種嚴格受限形式（右側只能是單一終止符號或終止符號配變數），所以正規語言是 CFL 的「真子集 (Proper Subset)」。</p>
+        </div>
+    </div>
+
+    <div id="ch5-examples" class="slide-card">
+        <h3>CFG 經典例題解析</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>這裡提供了三個經典的 CFG 構造例題，展示如何將語言邏輯寫成文法規則。</p>
+            
+            <div class="highlight-box">
+                <div class="theorem-title">例題 1：偶數長度的回文 (Even-length palindromes)</div>
+                <p>語言：<code>L = {ww<sup>R</sup> : w &isin; {a, b}*}</code></p>
+                <div class="code-block">
+V = { S }, T = { a, b }
+S &rarr; aSa | bSb | &lambda;
+                </div>
+                <p><strong>解題過程：</strong>回文的特性是從兩端往中間對稱。因此我們同時在字串的左右兩側生成相同的符號 <code>aSa</code> 或 <code>bSb</code>。當到達中心時，用 <code>&lambda;</code> 結束推導。例如 <code>aabbaa</code>：<code>S &rArr; aSa &rArr; aaSaa &rArr; aabSbaa &rArr; aabbaa</code>。</p>
+            </div>
+
+            <div class="highlight-box">
+                <div class="theorem-title">例題 2：a 與 b 數量相等</div>
+                <p>語言：<code>L = {w &isin; {a, b}* : n<sub>a</sub>(w) = n<sub>b</sub>(w)}</code></p>
+                <div class="code-block">S &rarr; aSb | bSa | SS | &lambda;</div>
+                <p><strong>解題過程：</strong>每生成一個 a 就必須配對一個 b，所以有 <code>aSb</code> 和 <code>bSa</code>。但字串可能是並列的兩個平衡字串（例如 <code>abab</code>），所以需要 <code>SS</code> 規則來串聯兩個平衡字串。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="ch5-derivations" class="slide-card">
+        <h3>最左推導、最右推導與推導樹 (Theorem 5.1)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>在產生字串的過程中，如果我們每一步都強制替換「最左邊」的變數，稱為<strong>最左推導 (Leftmost Derivation)</strong>；反之稱為<strong>最右推導 (Rightmost Derivation)</strong>。無論是哪種推導順序，最終產生的字串是相同的。</p>
+            <p><strong>推導樹 (Derivation Tree / Parse Tree)：</strong>以圖形方式表示推導過程。根節點 (Root) 標示為 S，內部節點是變數，子節點是規則右側的符號。對這棵樹進行「最左深度優先遍歷 (Leftmost depth-first traversal)」所得到的葉節點字串，稱為該樹的<strong>產出 (Yield)</strong>。</p>
+            
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 5.1</div>
+                <p>給定一個 CFG G，對於 L(G) 中的每一個字串 w，必定存在一棵推導樹，其產出為 w；反之，任何一棵以 G 的規則生成的推導樹，其產出必屬於 L(G)。這證明了文法的語法結構與樹狀結構是一一對應的。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="ch5-parsing" class="slide-card">
+        <h3>剖析與成員問題 (Parsing & Membership)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>剖析問題是指給定字串 w，找出是否有一連串的推導能產生 w。</p>
+            <p><strong>窮舉剖析 (Exhaustive/Brute-force Parsing) (Theorem 5.2)：</strong>嘗試所有可能的推導。它能保證找出屬於語言的字串，但如果字串「不在」語言中，且文法包含 <code>A &rarr; &lambda;</code> 或 <code>A &rarr; B</code>，程式可能會因為長度未增加而陷入無窮迴圈。</p>
+            <p>窮舉法的時間複雜度非常高，最壞情況下會產生 <code>O(|P|<sup>2|w|+1</sup>)</code> 也就是指數級別的節點。</p>
+            
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 5.3 與線性時間剖析</div>
+                <p>對於任何 CFG，存在演算法能在 <code>O(|w|&sup3;)</code> 時間內完成剖析 (例如 CYK 演算法)。</p>
+                <p>若文法是 <strong>S-grammar (Simple-grammar)</strong>，即所有規則都是 <code>A &rarr; ax</code>（a 是終止符，x 是變數字串），且每一個 (A, a) 配對最多出現一次，則因為每讀一個字元就能唯一決定下一條規則，剖析時間可降至<strong>線性時間 <code>O(|w|)</code></strong>。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="ch5-ambiguity" class="slide-card">
+        <h3>文法的模擬兩可性與消除 (Ambiguity)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>一個文法被稱為<strong>模擬兩可 (Ambiguous)</strong>，如果語言中存在某個字串 w，它擁有<strong>兩棵以上的推導樹</strong>（或者說擁有兩個不同的最左推導）。</p>
+            <p>在程式語言中，模擬兩可是不被允許的。例如運算式 <code>a+b*c</code> 如果用 <code>E &rarr; E+E | E*E | a | b | c</code> 解析，可能會先加後乘，也可能先乘後加，導致語意錯誤。</p>
+            
+            <div class="highlight-box">
+                <div class="theorem-title">消除模擬兩可的解題過程：</div>
+                <p>我們透過引入「層次」來強迫運算先後順序（例如：乘法優先於加法）：</p>
+                <div class="code-block">
+E &rarr; E+T | T     (Expression 層：處理加法)
+T &rarr; T*F | F     (Term 層：處理乘法)
+F &rarr; (E) | I     (Factor 層：處理括號與變數)
+I &rarr; a | b | c
+                </div>
+                <p>如此一來，<code>a+b*c</code> 的乘法 <code>b*c</code> 必定會在較底層的 <code>T &rarr; T*F</code> 先被綁定，確保了唯一且正確的推導樹。</p>
+                <p><em>注意：</em>有些語言是<strong>先天模擬兩可 (Inherently Ambiguous)</strong> 的，例如 <code>{a<sup>n</sup>b<sup>n</sup>c<sup>m</sup>} &cup; {a<sup>n</sup>b<sup>m</sup>c<sup>m</sup>}</code>，這種語言無論你怎麼改寫文法，都一定會產生模擬兩可的情形。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= CHAPTER 6 ================= -->
+    <h2 style="color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-top: 4rem;">Chapter 6: Simplification and Normal Forms</h2>
+
+    <div id="ch6-subst" class="slide-card">
+        <h3>文法轉換與替換法則 (Theorem 6.1)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>為了演算法的高效執行與分析，我們經常需要限制 CFG 右側的形式，這就是「簡化」的目的。簡化不一定會減少規則總數，但能讓文法結構更乾淨。</p>
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 6.1: 替換法則 (Substitution Rule)</div>
+                <p>若有規則 <code>A &rarr; uBv</code>，且 <code>B &rarr; y<sub>1</sub> | y<sub>2</sub> | ... | y<sub>n</sub></code>。我們可將 <code>A &rarr; uBv</code> 移除，直接替換為 <code>A &rarr; uy<sub>1</sub>v | uy<sub>2</sub>v | ... | uy<sub>n</sub>v</code>。這確保了生成語言不變，是簡化過程的基礎。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="ch6-useless" class="slide-card">
+        <h3>消除無用生成 (Removing Useless Productions)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>一個變數是「無用的 (Useless)」，如果它滿足以下任一條件：</p>
+            <ol>
+                <li>無法終止：它無法推導出任何純終止符號的字串。</li>
+                <li>不可到達：從起始符號 S 出發，無法推導出包含該變數的句型。</li>
+            </ol>
+            <div class="highlight-box">
+                <div class="theorem-title">例題：消除無用生成</div>
+                <p><strong>文法：</strong> <code>S &rarr; aS | A | C</code>, <code>A &rarr; a</code>, <code>B &rarr; aa</code>, <code>C &rarr; aCb</code></p>
+                <p><strong>步驟 1 (找出能終止的變數 V<sub>1</sub>)：</strong><br>A &rarr; a (A 加入 V<sub>1</sub>)。B &rarr; aa (B 加入 V<sub>1</sub>)。S &rarr; A，因為 A 在 V<sub>1</sub>，所以 S 加入 V<sub>1</sub>。C 的規則右側永遠包含 C，無法產生純終止符，所以 C 是無用的。移除包含 C 的規則。<br>
+                <em>剩下：</em> <code>S &rarr; aS | A</code>, <code>A &rarr; a</code>, <code>B &rarr; aa</code>。</p>
+                <p><strong>步驟 2 (相依圖與可達性)：</strong><br>從 S 出發可到達 S 與 A。但 B 完全無法被 S 到達。因此 B 也是無用的。<br>
+                <em>最終結果：</em> <code>S &rarr; aS | A</code>, <code>A &rarr; a</code>。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="ch6-lambda" class="slide-card">
+        <h3>消除 &lambda;-生成 (Removing &lambda;-Productions)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>形式為 <code>A &rarr; &lambda;</code> 的規則稱為 &lambda;-生成。若文法語言本身不含 &lambda;，我們可以消除這些規則。</p>
+            <p><strong>作法：</strong>先找出所有「可空變數 (Nullable variables)」（能推導出 &lambda; 的變數）。然後在其他規則中，將右側出現的可空變數進行「有存在」與「被消去」的所有排列組合替換，最後移除原先的 <code>A &rarr; &lambda;</code>。</p>
+            <div class="highlight-box">
+                <div class="theorem-title">例題：消除 &lambda;-生成</div>
+                <p><strong>文法：</strong> <code>S &rarr; ABaC</code>, <code>A &rarr; BC</code>, <code>B &rarr; b | &lambda;</code>, <code>C &rarr; D | &lambda;</code>, <code>D &rarr; d</code></p>
+                <p>1. 找出 Nullable：B, C 都有 &lambda;。因為 <code>A &rarr; BC</code>，所以 A 也是 Nullable。<br>
+                   2. 移除 &lambda; 規則。<br>
+                   3. 對 S &rarr; ABaC 進行組合展開 (A, B, C 皆可空)：<br>
+                   包含全存在：ABaC<br>
+                   消去一個：BaC (消A), AaC (消B), ABa (消C)<br>
+                   消去兩個：aC (消AB), Ba (消AC), Aa (消BC)<br>
+                   消去三個：a (消ABC)<br>
+                   <em>結果：</em> S &rarr; ABaC | BaC | AaC | ABa | aC | Ba | Aa | a。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="ch6-unit" class="slide-card">
+        <h3>消除單一生成與簡化順序 (Theorem 6.4 & 6.5)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>形如 <code>A &rarr; B</code> 的規則稱為單一生成 (Unit-productions)。這會增加剖析的無謂步驟。</p>
+            <p><strong>消除作法：</strong>畫出相依圖，找出所有 A 到 B 的路徑。如果 A 能到達 B，就把 B 所有非單一生成的規則，直接複製給 A。</p>
+            <div class="highlight-box">
+                <div class="theorem-title">Theorem 6.5: 正確的簡化順序</div>
+                <p>非常重要！消除一種規則可能會產生另一種規則，因此<strong>必須嚴格遵守以下順序</strong>：</p>
+                <ol>
+                    <li><strong>消除 &lambda;-生成</strong> (因為消除它可能會產生新的單一生成或無用變數)</li>
+                    <li><strong>消除單一生成</strong></li>
+                    <li><strong>消除無用生成</strong></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <div id="ch6-cnf" class="slide-card">
+        <h3>Chomsky 正規形式 (Chomsky Normal Form, CNF)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>在 CNF 中，所有規則的右側被嚴格限制為只有兩種形式：</p>
+            <ul>
+                <li><code>A &rarr; BC</code> (兩個變數)</li>
+                <li><code>A &rarr; a</code> (單一終止符號)</li>
+            </ul>
+            <div class="highlight-box">
+                <div class="theorem-title">演算法與例題：轉換為 CNF</div>
+                <p><strong>文法：</strong> <code>S &rarr; ABa</code>, <code>A &rarr; aab</code>, <code>B &rarr; Ac</code></p>
+                <p><strong>Step 1: 將終止符轉為變數</strong><br>
+                   新增 <code>X &rarr; a</code>, <code>Y &rarr; b</code>, <code>Z &rarr; c</code>。<br>
+                   替換原規則：<code>S &rarr; ABX</code>, <code>A &rarr; XXY</code>, <code>B &rarr; AZ</code>。</p>
+                <p><strong>Step 2: 將長度超過 2 的變數串列截斷</strong><br>
+                   <code>S &rarr; ABX</code> 拆為：<code>S &rarr; AC</code>, <code>C &rarr; BX</code>。<br>
+                   <code>A &rarr; XXY</code> 拆為：<code>A &rarr; XD</code>, <code>D &rarr; XY</code>。</p>
+                <p><em>最終 CNF：</em> S &rarr; AC, C &rarr; BX, A &rarr; XD, D &rarr; XY, B &rarr; AZ, X &rarr; a, Y &rarr; b, Z &rarr; c。</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="ch6-gnf" class="slide-card">
+        <h3>Greibach 正規形式與左遞迴消除 (GNF)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>在 Greibach Normal Form (GNF) 中，規則右側必須是<strong>一個終止符號開頭，後面跟著任意數量的變數</strong> (<code>A &rarr; aV*</code>)。這種形式非常適合由上而下剖析，因為每一步都能消耗一個輸入字元。</p>
+            <p><strong>消除左遞迴 (Left Recursion to Right Recursion)：</strong>如果文法有 <code>A &rarr; Ax | y</code>，會導致由上而下剖析陷入無窮迴圈。必須轉換為右遞迴：<br>
+            <code>A &rarr; yA'</code><br>
+            <code>A' &rarr; xA' | &lambda;</code></p>
+        </div>
+    </div>
+
+    <!-- ================= CHAPTER 7 ================= -->
+    <h2 style="color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-top: 4rem;">Chapter 7: Pushdown Automata (PDA)</h2>
+
+    <div id="ch7-npda" class="slide-card">
+        <h3>非決定性下推自動機 (Nondeterministic Pushdown Automata)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>有限狀態機 (FSA) 沒有記憶體，無法處理如 <code>a<sup>n</sup>b<sup>n</sup></code> 這種需要計數的語言。<strong>下推自動機 (PDA)</strong> 在 FSA 的基礎上，加入了一個<strong>堆疊 (Stack)</strong> 作為儲存機制，使其具備處理上下文無關語言 (CFL) 的能力。</p>
+            <p>NPDA 包含七個元素：狀態集合 (Q)、輸入字母表 (&Sigma;)、堆疊字母表 (&Gamma;)、轉換函數 (&delta;)、初始狀態 (q<sub>0</sub>)、堆疊底部符號 (z) 以及最終狀態集合 (F)。</p>
+        </div>
+    </div>
+
+    <div id="ch7-moves" class="slide-card">
+        <h3>NPDA 的轉換、圖形與接受模式</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>NPDA 的轉換函數 <code>&delta;(q, a, b) = {(q', cd)}</code> 代表：當前在狀態 q，讀入符號 a，且堆疊頂端為 b 時，轉移到狀態 q'，並將堆疊頂端的 b 彈出，壓入 cd。</p>
+            <p><strong>接受模式 (Modes of Acceptance)：</strong>字串被接受有三種等價的定義方式：</p>
+            <ol>
+                <li><strong>到達最終狀態 (Accepted on final state)</strong>：讀完所有輸入後，狀態位於 F 中。</li>
+                <li><strong>清空堆疊 (Accepted on empty stack)</strong>：讀完所有輸入後，堆疊完全清空（包含 z 都不見）。</li>
+                <li>兩者皆是。</li>
+            </ol>
+            <p>我們通常使用「瞬時描述 (Instantaneous Descriptions, ID)」 <code>(q, w, u)</code> 來追蹤 PDA 的執行過程（當前狀態、剩餘字串、堆疊內容）。</p>
+        </div>
+    </div>
+
+    <div id="ch7-equiv" class="slide-card">
+        <h3>CFG 與 NPDA 的等價性 (Theorem 7.1)</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>Theorem 7.1 證明了上下文無關語言 (CFL) 與 NPDA 的等價性：對於任何一個 CFL，必定存在一個 NPDA 可以辨識它。其構造性證明是利用 Greibach Normal Form (GNF)。</p>
+        </div>
+    </div>
+
+    <div id="ch7-gnf2npda" class="slide-card">
+        <h3>從 GNF 構造 NPDA</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>因為 GNF 的特性是每次推導都會產生一個終止符號（對應消耗一個輸入字元），所以可以非常直覺地轉為 NPDA：變數存放在堆疊中，輸入字元用來觸發轉換。</p>
+            <div class="highlight-box">
+                <div class="theorem-title">例題：GNF 轉 NPDA</div>
+                <p><strong>GNF 文法：</strong> <code>S &rarr; aSA | a</code>, <code>A &rarr; bB</code>, <code>B &rarr; b</code></p>
+                <p><strong>構造規則：</strong></p>
+                <div class="code-block">
+1. 初始啟動：&delta;(q0, &lambda;, z) = {(q1, Sz)}    // 將 S 壓入堆疊
+2. 模擬文法 (在 q1 狀態)：
+   對應 S &rarr; aSA：&delta;(q1, a, S) 加入 (q1, SA)
+   對應 S &rarr; a：  &delta;(q1, a, S) 加入 (q1, &lambda;)
+   對應 A &rarr; bB： &delta;(q1, b, A) = {(q1, B)}
+   對應 B &rarr; b：  &delta;(q1, b, B) = {(q1, &lambda;)}
+3. 接受結束：&delta;(q1, &lambda;, z) = {(qf, &lambda;)}     // 堆疊空到剩 z，進入最終狀態
+                </div>
+            </div>
+            <p>如果是「任意 CFG」轉 NPDA，則先不消耗輸入就把變數展開到堆疊，遇到終止符號時，再用 <code>&delta;(q, a, a) = {(q, &lambda;)}</code> 彈出匹配的終止符號。</p>
+        </div>
+    </div>
+
+    <div id="ch7-npda2cfg" class="slide-card">
+        <h3>將 NPDA 轉換為 CFG</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>將 NPDA 轉回 CFG 的過程非常繁雜。概念是創造形如 <code>(q<sub>i</sub> A q<sub>j</sub>)</code> 的複合變數，代表「從狀態 q<sub>i</sub> 開始，清空堆疊符號 A，最後到達狀態 q<sub>j</sub>」的過程。</p>
+            <p>例如，若有轉換 <code>&delta;(q<sub>i</sub>, a, A) = (q<sub>j</sub>, BC)</code>，則產生的文法規則會是：<br>
+            <code>(q<sub>i</sub> A q<sub>k</sub>) &rarr; a (q<sub>j</sub> B q<sub>l</sub>) (q<sub>l</sub> C q<sub>k</sub>)</code> （對所有可能的狀態 q<sub>k</sub>, q<sub>l</sub> 展開組合）。接著再利用 CH6 學到的「消除無用生成」把不可能到達的狀態路徑刪除。</p>
+        </div>
+    </div>
+
+    <div id="ch7-dpda" class="slide-card">
+        <h3>決定性下推自動機 (DPDA) 與 DCFL</h3>
+        <div class="explanation">
+            <p><strong>投影片內容解析：</strong>DPDA 是 NPDA 的特例，要求在任何組態下，<strong>最多只能有一種合法的轉換選擇</strong>（不能有分岔，也不能在有 &lambda;-move 時存在輸入字元的衝突）。</p>
+            <p><strong>決定性上下文無關語言 (DCFL)：</strong>能被 DPDA 接受的語言。請注意，<strong>DPDA 的能力嚴格小於 NPDA</strong>！例如回文 <code>ww<sup>R</sup></code> 是 NPDA 可以辨識的，但 DPDA 無法辨識（因為 DPDA 無法猜測字串的中間點在哪裡）。</p>
+            <p>DCFL 的重要性在於，它們可以使用線性時間的高效演算法進行剖析 (如 LR parser)，這正是現代編譯器 (Compiler) 解析程式碼的基礎理論。</p>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

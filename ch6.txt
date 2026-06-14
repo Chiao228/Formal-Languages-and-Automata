@@ -1,0 +1,91 @@
+Chapter 6 SIMPLIFICATION OF CONTEXT-FREE GRAMMARS AND NORMAL FORMS
+
+--- Slide ---
+Learning Objectives At the conclusion of the chapter, the student will be able to: Simplify a context-free grammar by removing useless productions Simplify a context-free grammar by removing  - productions Simplify a context-free grammar by removing unit-productions Determine whether or not a context-free grammar is in  Chomsky normal form Transform a context-free grammar into an equivalent grammar in Chomsky normal form Determine whether or not a context-free grammar is in  Greibach normal form Transform a context-free grammar into an equivalent grammar in Greibach normal form
+
+--- Slide ---
+Methods for Transforming Grammars The definition of a context-free grammar imposes no restrictions on the right side of a production In some cases, it is convenient to restrict the form of the right side of all productions Simplifying a grammar involves eliminating certain types of productions while producing an equivalent grammar, but does not necessarily result in a reduction of the total number of productions For simplicity, we  focus on languages that do not include the empty string
+
+--- Slide ---
+A Useful Substitution Rule Theorem 6.1 states that, If A and B are distinct variables, a production of the form A   uBv can be replaced by a set of productions in which B is substituted by all strings B derives in one step.  Consider the grammar 	 V = { A, B }, T = { a, b, c }, and productions  	A    a | aaA | abBc 	B    abbA | b   We can replace A    abBc with two productions that replace B (in  red ), obtaining an equivalent grammar with productions 	A    a | aaA | ab abbA c | ab b c 	B    abbA | b  
+
+--- Slide ---
+Useless Productions A variable is  useful  if it occurs in the derivation of at least one string in the language Otherwise, the variable and any productions in which it appears is considered  useless   A variable is  useless  if: No terminal strings can be derived from the variable The variable symbol cannot be reached from S Example 1: B can not be reached from the start symbol S. Example 2: A can not generate any terminal strings 	S    A 	A    aA |   	B    bA S     aSb  |   |  A A     aA
+
+--- Slide ---
+Removing Useless Productions It is always possible to remove useless productions from a context-free grammar: Let V 1  be the set of useful variables, initialized to empty Add a variable A to V 1  if  there is a production  of the form 	A    terminal symbols (including  )  or variables in  V 1 	(Repeat until nothing else can be added to V 1) Eliminate any productions containing variables not in V 1 Use a dependency graph to identify and eliminate variables that are unreachable from S
+
+--- Slide ---
+Dependency Graph   based on Reachability A directed graph has its vertices labeled with variables, with an edge from vertices C to D if and only if there is a production form C    xDy Example S     aS  | A A    a B    aa S     aA  |  bB A    a B    bB  | b S     aAB A    a B    bB  | b
+
+--- Slide ---
+Application of the Procedure for Removing Useless Productions Consider the grammar from example 6.3: 	S    aS | A | C  	A    a 	B   aa 	C   aCb   In step 2, variables A, B, and S are added to  V 1 Since C is useless, it is eliminated in step 3, resulting in the grammar with productions 	S    aS | A 	A    a 	B   aa In step 4, B is identified as unreachable from S, resulting in the grammar with productions 	S    aS | A 	A    a
+
+--- Slide ---
+Think   About Q: Should unreachable variables be eliminated before those that cannot generate terminal strings? A: No Q: When will we generate useless productions? A: convert  dfa  to regular grammar
+
+--- Slide ---
+- Productions A production with   on the right side is called a  -production A variable A is called  nullable  if there is a sequence of derivations through which A produces    If a grammar generates a language not containing  , any -productions can be removed In the grammar below, S 1  is nullable 	S      aS 1 b 	S 1     aS 1 b|   Since the language is  -free, we have the equivalent grammar 	S      aS 1 b | ab 	S 1      aS 1 b | ab
+
+--- Slide ---
+Removing  - Productions It is possible to remove  -productions  from a context-free grammar that does not generate   : Let V N  be the set of nullable variables, initialized to empty Add a variable A to V N  if there is a production having one of the forms: A     λ A    variables already in  V N 	(Repeat until nothing else can be added to V N) Eliminate  -productions Add productions in which nullable symbols are replaced by  λ   in all possible combinations
+
+--- Slide ---
+Application of the Procedure for Removing  - Productions Consider the grammar from example 6.5: 	S    ABaC  	A    BC 	B   b |  	C   D |  	D    d  In step 2, variables B, C, and A (in that order) are added to  V N In step 3,  -productions are eliminated In step 4, productions are added by replacing nullable symbols with in    all possible combinations, resulting in 	S    ABaC | BaC | AaC |  A B a  | aC | Aa | Ba | a 	A    B | C | BC 	B   b 	C   D 	D    d 
+
+--- Slide ---
+Removing  - Productions In the previous example, B  is nullable (may not create  ) How about having B     only? (lambda-only) Remove variable B from productions directly Suppose that G is a context-free grammar such that  λ  ∈ L (G). If we apply the removing procedure, we obtain a new grammar G’ such that     L(G’) = L (G) − { λ }. This is why we need to start with a  λ- free language when discussing grammar simplification
+
+--- Slide ---
+Unit- Productions A production of the form A    B (where A and B are variables) is called a  unit-production Unit-productions add unneeded complexity to a grammar and can usually be removed by simple substitution Theorem 6.4 states that any context-free grammar  without  - productions  has an equivalent grammar without unit-productions The procedure for eliminating unit-productions assumes that all  - productions have been previously removed
+
+--- Slide ---
+Think About Q: Why do we say that  - productions must be removed first? A: Consider the example below    S   AB    A   
+
+--- Slide ---
+Removing  Unit- Productions Draw a dependency graph with an edge from A to B corresponding to every A    B production in the grammar Construct a new grammar that includes all the productions from the original grammar, except for the unit-productions Whenever there is  a path  from A to B in the dependency graph, replace B using the substitution rule from Theorem 6.1, but using only the productions in the new grammar
+
+--- Slide ---
+Application of the Procedure for Removing  Unit- Productions Consider the grammar from example 6.6: 	S    Aa | B  	A   a | bc |B 	B   A | bb 	 The dependency graph contains paths from S to A, S to B, B to A, and A to B After removing unit-productions and adding the new productions (in  red ), the resulting grammar is 	S    Aa |  a | bc | bb 	A   a | bc |  bb 	B    a | bc  | bb 
+
+--- Slide ---
+Simplification of Grammars Theorem 6.5 states that, for any context-free language that  does not include  λ , there is a context-free grammar without useless,  - , or unit-productions Since the removal of one type of production may introduce productions of another type, undesirable productions should be removed in the following order: Remove  - productions Remove  unit- productions Remove useless productions
+
+--- Slide ---
+Think About Q: Why is the order important in the above procedure? A: Removing  - productions may create new  unit-productions A:  Removing  - productions may create useless variables (A is not lambda-only)  S   AB A     B    b  (A is lambda-only)  S   AB A    B    b
+
+--- Slide ---
+Chomsky Normal Form In Chomsky normal form, the number of symbols on the right side of a production is strictly limited. A context-free grammar is in  Chomsky normal form  if all of its productions are in one of the forms below (A, B, C are variables; a is a terminal symbol) A    BC A    a The grammar below is in  Chomsky normal form 		S     AS   | a 		A     SA|  b
+
+--- Slide ---
+Transforming a Grammar into Chomsky Normal Form For any context-free grammar that does not generate  , it is possible to find an equivalent grammar in Chomsky normal form : Copy any productions of the form A    a For other productions containing a terminal symbol x on the right side, replace x with a variable X and add the production X    x  Introduce additional variables to reduce the lengths of the right sides of productions as necessary, replacing long productions with productions of the form W    YZ (W, Y, Z are variables)
+
+--- Slide ---
+Application of the Procedure for Removing  Unit- Productions Consider the grammar from example 6.8, which is clearly not in Chomsky normal form 	S     ABa   	A    aab 	B   Ac After replacing terminal symbols with new variables and adding new productions (in  red ), the resulting grammar is 	S    AC 	 C    BX 	 A   XD 	 D    XY 	B   AZ 	 X   a 	Y   b 	Z   c
+
+--- Slide ---
+Greibach Normal Form In Greibach normal form, there are restrictions on the positions of terminal and variable symbols A context-free grammar is in  Greibach Normal Form  if, in all of its productions, the right side consists of single terminal followed by any number of variables Compare to s-grammar The grammar below is in  Greibach normal form 		S     aAB | bBB | bB 		A     aA|  bB | b 		B   b
+
+--- Slide ---
+Transforming a Grammar into Greibach Normal Form For any context-free grammar that does not generate  , it is possible to find an equivalent grammar in Greibach normal form ( not easy actually ) Consider the grammar from example 6.10, which is clearly not in  Greibach  normal form 	S     abSb  | aa  After replacing terminal symbols with new variables and adding new productions (in  red ), the resulting grammar is 	S    aBSB | aA 	 A    a 	 B    b
+
+--- Slide ---
+Transforming a Grammar into Greibach Normal Form Having trouble with left-recursive CFG, for example    E    E + T | T    T    T * F | F    F   a | b | c Solution  Change left recursion to right recursion Apply the rule substitutions  to bring out the leading terminals
+
+--- Slide ---
+Left Recursion to Right Recursion General guideline    A    Ax 1  | A x 2  | y 1  | y 2   Change to:     A    y 1 A’ | y 2 A’     A’    x 1 A’ | x 2 A’ |   Example A    Aa | Ab | a | b A    AaB |  bA
+
+--- Slide ---
+Membership Algorithm for Context-Free Grammars Based on the CYK algorithm: |w| 3  steps The grammar should be in Chomsky normal form For a given string w = a 1 a 2 …a n Steps Compute V 11 , V 22 , V 33 , …,  V nn Compute V 12 , V 23 , V 34 , …, V n-1n Compute V 13 , V 24 , V 35 , …, V n-2n And so on w  L (G) if and only if S    V 1n
+
+--- Slide ---
+Example: Given grammar and w =  aabbb    S   AB    A  BB | a    B  AB | b
+
+--- Slide ---
+Extra Notes If the CFG can generate the empty string, the  λ- production is permitted only for the start symbol in the normal form, and it is not allowed for any other variables Avoids ambiguity and unpredictable Parsing
+
+--- Slide ---
+Exercises 1. For the following grammar, remove all unit-productions, all useless productions, and all λ–productions  S   aA  |  aBB  A  aaA  |    B   bB  |  bbC  C B
+
+--- Slide ---
+Exercises 2.  Convert the above grammar into Chomsky normal form 3. Convert the following  grammar into  Greibach  normal form  S   AB  A   aA  |  bB  | b  B  b
